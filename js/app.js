@@ -1,4 +1,4 @@
-// Gestor de tareas - Etapa 4: filtros y búsqueda
+// Gestor de tareas - Etapa 5: ordenamiento
 
 let tareas = [];
 let idEditando = null;
@@ -13,6 +13,7 @@ const mensajeError = document.getElementById('error');
 const lista = document.getElementById('lista');
 const inputBuscar = document.getElementById('buscar');
 const botonesFiltro = document.querySelectorAll('.filtros button');
+const selectOrden = document.getElementById('orden');
 
 // Se llama después de cada cambio en las tareas
 function actualizar() {
@@ -32,8 +33,22 @@ function obtenerTareasVisibles() {
   });
 }
 
+// Ordena el arreglo según la opción elegida
+const pesoPrioridad = { Alta: 1, Media: 2, Baja: 3 };
+
+function ordenarTareas(arreglo) {
+  if (selectOrden.value === 'prioridad') {
+    arreglo.sort((a, b) => pesoPrioridad[a.prioridad] - pesoPrioridad[b.prioridad]);
+  } else if (selectOrden.value === 'antiguas') {
+    arreglo.sort((a, b) => a.fecha - b.fecha);
+  } else {
+    arreglo.sort((a, b) => b.fecha - a.fecha);
+  }
+}
+
 function mostrarTareas() {
   const visibles = obtenerTareasVisibles();
+  ordenarTareas(visibles);
   lista.innerHTML = '';
 
   if (visibles.length === 0) {
@@ -125,9 +140,10 @@ function eliminarTarea(id) {
   actualizar();
 }
 
-// ---------- Filtros y búsqueda ----------
+// ---------- Filtros, búsqueda y orden ----------
 
 inputBuscar.addEventListener('input', mostrarTareas);
+selectOrden.addEventListener('change', mostrarTareas);
 
 botonesFiltro.forEach((boton) => {
   boton.addEventListener('click', () => {
