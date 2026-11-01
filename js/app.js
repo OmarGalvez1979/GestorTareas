@@ -1,4 +1,4 @@
-// Gestor de tareas - Etapa 8: consumo de API (JSONPlaceholder)
+// Gestor de tareas - Etapa 9: CustomEvent (versión final)
 
 const CLAVE = 'gestor_tareas';
 const URL_API = 'https://jsonplaceholder.typicode.com/todos?_limit=10';
@@ -22,12 +22,21 @@ const pendientesTexto = document.getElementById('pendientes');
 const completadasTexto = document.getElementById('completadas');
 const notificacion = document.getElementById('notificacion');
 
-// Se llama después de cada cambio en las tareas
+// ---------- Opción B: CustomEvent ----------
+
+// Avisa que las tareas cambiaron disparando un evento propio
 function actualizar() {
-  mostrarTareas();
-  actualizarDashboard();
-  guardarTareas();
+  const evento = new CustomEvent('tareasActualizadas', { detail: tareas });
+  document.dispatchEvent(evento);
 }
+
+// Cada función escucha el evento y se ejecuta sola cuando hay cambios
+document.addEventListener('tareasActualizadas', guardarTareas);
+document.addEventListener('tareasActualizadas', mostrarTareas);
+document.addEventListener('tareasActualizadas', actualizarDashboard);
+document.addEventListener('tareasActualizadas', (evento) => {
+  console.log('Tareas actualizadas:', evento.detail.length);
+});
 
 // ---------- Mostrar tareas ----------
 
