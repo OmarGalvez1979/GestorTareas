@@ -1,4 +1,6 @@
-// Gestor de tareas - Etapa 6: dashboard de métricas
+// Gestor de tareas - Etapa 7: persistencia con localStorage
+
+const CLAVE = 'gestor_tareas';
 
 let tareas = [];
 let idEditando = null;
@@ -22,6 +24,7 @@ const completadasTexto = document.getElementById('completadas');
 function actualizar() {
   mostrarTareas();
   actualizarDashboard();
+  guardarTareas();
 }
 
 // ---------- Mostrar tareas ----------
@@ -168,7 +171,21 @@ botonesFiltro.forEach((boton) => {
   });
 });
 
+// ---------- localStorage ----------
+
+function guardarTareas() {
+  localStorage.setItem(CLAVE, JSON.stringify(tareas));
+}
+
+function cargarTareas() {
+  const datos = localStorage.getItem(CLAVE);
+  if (datos !== null) {
+    tareas = JSON.parse(datos);
+  }
+}
+
 // ---------- Inicio ----------
 
+cargarTareas();
 mostrarTareas();
 actualizarDashboard();
