@@ -1,7 +1,8 @@
-// Gestor de tareas - Etapa 3: editar, eliminar y completar
+// Gestor de tareas - Etapa 4: filtros y búsqueda
 
 let tareas = [];
 let idEditando = null;
+let filtroActual = 'todas';
 
 // Elementos del HTML
 const formulario = document.getElementById('formulario');
@@ -10,6 +11,8 @@ const selectPrioridad = document.getElementById('prioridad');
 const botonGuardar = document.getElementById('btn-guardar');
 const mensajeError = document.getElementById('error');
 const lista = document.getElementById('lista');
+const inputBuscar = document.getElementById('buscar');
+const botonesFiltro = document.querySelectorAll('.filtros button');
 
 // Se llama después de cada cambio en las tareas
 function actualizar() {
@@ -18,15 +21,27 @@ function actualizar() {
 
 // ---------- Mostrar tareas ----------
 
+// Devuelve las tareas según el filtro y la búsqueda
+function obtenerTareasVisibles() {
+  const texto = inputBuscar.value.toLowerCase();
+
+  return tareas.filter((tarea) => {
+    if (filtroActual === 'pendientes' && tarea.completada) return false;
+    if (filtroActual === 'completadas' && !tarea.completada) return false;
+    return tarea.titulo.toLowerCase().includes(texto);
+  });
+}
+
 function mostrarTareas() {
+  const visibles = obtenerTareasVisibles();
   lista.innerHTML = '';
 
-  if (tareas.length === 0) {
+  if (visibles.length === 0) {
     lista.innerHTML = '<li>No hay tareas para mostrar.</li>';
     return;
   }
 
-  tareas.forEach((tarea) => {
+  visibles.forEach((tarea) => {
     const li = document.createElement('li');
     if (tarea.completada) {
       li.classList.add('completada');
@@ -109,6 +124,19 @@ function eliminarTarea(id) {
   tareas = tareas.filter((t) => t.id !== id);
   actualizar();
 }
+
+// ---------- Filtros y búsqueda ----------
+
+inputBuscar.addEventListener('input', mostrarTareas);
+
+botonesFiltro.forEach((boton) => {
+  boton.addEventListener('click', () => {
+    filtroActual = boton.dataset.filtro;
+    botonesFiltro.forEach((b) => b.classList.remove('activo'));
+    boton.classList.add('activo');
+    mostrarTareas();
+  });
+});
 
 // ---------- Inicio ----------
 
