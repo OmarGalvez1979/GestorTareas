@@ -1,4 +1,4 @@
-// Gestor de tareas - Etapa 5: ordenamiento
+// Gestor de tareas - Etapa 6: dashboard de métricas
 
 let tareas = [];
 let idEditando = null;
@@ -14,10 +14,14 @@ const lista = document.getElementById('lista');
 const inputBuscar = document.getElementById('buscar');
 const botonesFiltro = document.querySelectorAll('.filtros button');
 const selectOrden = document.getElementById('orden');
+const totalTexto = document.getElementById('total');
+const pendientesTexto = document.getElementById('pendientes');
+const completadasTexto = document.getElementById('completadas');
 
 // Se llama después de cada cambio en las tareas
 function actualizar() {
   mostrarTareas();
+  actualizarDashboard();
 }
 
 // ---------- Mostrar tareas ----------
@@ -75,6 +79,16 @@ function mostrarTareas() {
 
     lista.appendChild(li);
   });
+}
+
+// ---------- Dashboard ----------
+
+function actualizarDashboard() {
+  const completadas = tareas.filter((tarea) => tarea.completada).length;
+
+  totalTexto.textContent = tareas.length;
+  completadasTexto.textContent = completadas;
+  pendientesTexto.textContent = tareas.length - completadas;
 }
 
 // ---------- Crear, editar, completar y eliminar ----------
@@ -157,3 +171,4 @@ botonesFiltro.forEach((boton) => {
 // ---------- Inicio ----------
 
 mostrarTareas();
+actualizarDashboard();
