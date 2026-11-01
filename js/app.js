@@ -1,6 +1,7 @@
-// Gestor de tareas - Etapa 7: persistencia con localStorage
+// Gestor de tareas - Etapa 8: consumo de API (JSONPlaceholder)
 
 const CLAVE = 'gestor_tareas';
+const URL_API = 'https://jsonplaceholder.typicode.com/todos?_limit=10';
 
 let tareas = [];
 let idEditando = null;
@@ -19,6 +20,7 @@ const selectOrden = document.getElementById('orden');
 const totalTexto = document.getElementById('total');
 const pendientesTexto = document.getElementById('pendientes');
 const completadasTexto = document.getElementById('completadas');
+const notificacion = document.getElementById('notificacion');
 
 // Se llama después de cada cambio en las tareas
 function actualizar() {
@@ -184,8 +186,54 @@ function cargarTareas() {
   }
 }
 
+// ---------- API ----------
+
+function mostrarNotificacion(mensaje, tipo) {
+  notificacion.textContent = mensaje;
+  notificacion.className = tipo; // 'exito' o 'fallo'
+  setTimeout(() => {
+    notificacion.className = 'oculto';
+  }, 4000);
+}
+
+async function cargarDesdeApi() {
+  try {
+    const respuesta = await fetch(URL_API);
+    if (!respuesta.ok) {
+      throw new Error('Error del servidor: ' + respuesta.status);
+    }
+    const datos = await respuesta.json();
+    const prioridades = ['Alta', 'Media', 'Baja'];
+
+    datos.forEach((item, i) => {
+      // Solo se agrega si no existe otra tarea con el mismo id
+      const existe = tareas.some((t) => t.id === item.id);
+      if (!existe) {
+        tareas.push({
+          id: item.id,
+          titulo: item.title,
+          prioridad: prioridades[item.id % 3],
+          completada: item.completed,
+          fecha: Date.now() - i * 60000
+        });
+      }
+    });
+
+    actualizar();
+    mostrarNotificacion('Se cargaron ' + datos.length + ' tareas desde la API.', 'exito');
+  } catch (error) {
+    console.error(error);
+    mostrarNotificacion('No se pudieron cargar las tareas de la API. Revisa tu conexión.', 'fallo');
+  }
+}
+
 // ---------- Inicio ----------
 
-cargarTareas();
+// Si localStorage está vacío se cargan las tareas de la API
+if (localStorage.getItem(CLAVE) === null) {
+  cargarDesdeApi();
+} else {
+  cargarTareas();
+}
 mostrarTareas();
 actualizarDashboard();
