@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestor de tareas</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header>
+    <h1>Gestor de tareas</h1>
+  </header>
+
+  <main>
+    <section>
+      <h2>Nueva tarea</h2>
+      <form id="formulario">
+        <input type="text" id="titulo" placeholder="Título de la tarea">
+        <select id="prioridad">
+          <option value="">-- Prioridad --</option>
+          <option value="Alta">Alta</option>
+          <option value="Media">Media</option>
+          <option value="Baja">Baja</option>
+        </select>
+        <button type="submit" id="btn-guardar">Agregar</button>
+        <p id="error" class="error"></p>
+      </form>
+    </section>
+
+    <section>
+      <h2>Mis tareas</h2>
+      <ul id="lista"></ul>
+    </section>
+  </main>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
